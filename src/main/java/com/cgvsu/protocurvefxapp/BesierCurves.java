@@ -12,17 +12,21 @@ public class BesierCurves {
         int n = points.size() - 1;//Степень кривой
 
         ArrayList<Point2D> cK = new ArrayList<>();
-        double t = 1;
+        double shag = 0.1;
+        double t = 0;
 
-        for (int k = 0; k < n; k++) {
-            int cX = 50;
-            int cY = 50;
-            for (int k1 = 0; k1 < n; k1++) {
+        cK.add(points.get(0));
+
+        while (Math.abs(t - (1 + shag)) >= 10e-10) {
+            double cX = 0;
+            double cY = 0;
+            for (int k = 0; k <= n; k++) {
                 double b = basicFunction(n, k, t);
                 cX += points.get(k).getX() * b;
                 cY += points.get(k).getY() * b;
             }
             cK.add(new Point2D(cX, cY));
+            t += shag;
         }
 
         for (int i = 1; i < cK.size(); i++) {
@@ -34,7 +38,7 @@ public class BesierCurves {
 
     public static double basicFunction(int n, int k, double t) {
         int c = factorial(n)/factorial(k)/factorial(n - k);
-        return c * Math.pow(t, n) * Math.pow(1 - t, n - k);
+        return c * Math.pow(t, k) * Math.pow(1 - t, n - k);
     }
     public static int factorial(int n) {
         if (n == 0) {
