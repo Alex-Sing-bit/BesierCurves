@@ -1,4 +1,4 @@
-package com.cgvsu.protocurvefxapp;
+package ru.vsu.cs.baklanova.besiercurvefxapp;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
@@ -8,11 +8,11 @@ import java.util.ArrayList;
 
 public class BesierCurves {
     public static void drawBesierCurve(final GraphicsContext graphicsContext, ArrayList<Point2D> points) {
-        final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
+//        final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
         int n = points.size() - 1;//Степень кривой
 
         ArrayList<Point2D> cK = new ArrayList<>();
-        double shag = 0.1;
+        double shag = 0.01;
         double t = 0;
 
         cK.add(points.get(0));
@@ -37,14 +37,21 @@ public class BesierCurves {
     }
 
     public static double basicFunction(int n, int k, double t) {
-        int c = factorial(n)/factorial(k)/factorial(n - k);
+        long c;
+        if (k < n - k) {
+            c = partFactorial(n, n - k) / partFactorial(k, 1);
+        } else {
+            c = partFactorial(n, k) / partFactorial(n - k, 1);
+        }
         return c * Math.pow(t, k) * Math.pow(1 - t, n - k);
     }
-    public static int factorial(int n) {
+    public static long partFactorial(int n, int m) {
         if (n == 0) {
             return 1;
+        } else if (n == m) {
+            return 1;
         } else {
-            return n * factorial(n-1);
+            return n * partFactorial(n-1, m);
         }
     }
 }
