@@ -34,6 +34,7 @@ public class ProtoCurveController {
         canvas.setOnMouseClicked(event -> {
             switch (event.getButton()) {
                 case PRIMARY -> handlePrimaryClick(graphicsContext, event);
+                case MIDDLE -> handleMiddleClick(graphicsContext, event);
             }
         });
     }
@@ -55,13 +56,10 @@ public class ProtoCurveController {
             }
             BesierCurves.drawBesierCurve(graphicsContext, points);
 
-        } else if (points.size() > 30) {
-            graphicsContext.clearRect(1, 1, 798.5, 598);
-            points.clear();
         }
         if (points.size() == 29) {
-            graphicsContext.fillText("Больше точек не поддерживается. Нажмите еще раз для очистки холста.", 20, 590);
-            System.out.println("Больше точек не поддерживается. Нажмите еще раз для очистки холста.");
+            graphicsContext.fillText("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.", 20, 590);
+            System.out.println("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.");
         }
 
 
@@ -70,5 +68,10 @@ public class ProtoCurveController {
             graphicsContext.strokeLine(lastPoint.getX(), lastPoint.getY(), clickPoint.getX(), clickPoint.getY());
         }*/
 
+    }
+
+    private void handleMiddleClick(GraphicsContext graphicsContext, MouseEvent event) {
+        points.clear();
+        graphicsContext.clearRect(1, 1, 798.5, 598);
     }
 }
