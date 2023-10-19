@@ -19,9 +19,11 @@ public class ProtoCurveController {
 
     ArrayList<Point2D> points = new ArrayList<Point2D>();
 
-    private final int POINT_RADIUS = 6;
+    private final int POINT_RADIUS = 3;
 
     private boolean isDragged = false;
+
+    private int isDraggedPoint = -1;
 
     @FXML
     private void initialize() {
@@ -40,12 +42,13 @@ public class ProtoCurveController {
         });
 
         canvas.setOnMouseClicked(event -> {
-            isDragged = false;
             switch (event.getButton()) {
-                case PRIMARY -> handlePrimaryClick(graphicsContext, event);
+                case PRIMARY -> handlePrimaryClick(graphicsContext, event, isDraggedPoint);
                 case MIDDLE -> handleMiddleClick(graphicsContext, event);
                 case SECONDARY -> deleteLastPoint(graphicsContext);
             }
+            isDragged = false;
+            isDraggedPoint = -1;
         });
     }
 
@@ -54,14 +57,11 @@ public class ProtoCurveController {
         for (int i = 0; i < points.size(); i++) {
             double x = points.get(i).getX();
             double y = points.get(i).getY();
-            //graphicsContext.fillOval(160, 160, 60, 60);
-            //System.out.println(x + " " + event.getX());
-            //System.out.println(y + " " + event.getY());
-            //System.out.println();
             if (Math.abs(event.getX() - x) <= POINT_RADIUS) {
                 if (Math.abs(event.getY() - y) <= POINT_RADIUS) {
                     if (!isDragged) {
                         points.remove(i);
+                        isDraggedPoint = i;
                         isDragged = true;
                     }
                     //graphicsContext.fillOval(60, 60, 60, 60);
@@ -78,16 +78,25 @@ public class ProtoCurveController {
         points.remove(points.size() - 1);
         drawBesierCurves(graphicsContext);
     }
+
     private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event) {
+        handlePrimaryClick(graphicsContext, event, points.size() - 1);
+    }
+    private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event, int i) {
         final Point2D clickPoint = new Point2D(event.getX(), event.getY());
-        points.add(clickPoint);
+        if (i < 0) {
+            points.add(clickPoint);
+        } else {
+            points.add(i, clickPoint);
+        }
 
         //System.out.println(BesierCurves.partFactorial(13, 12));
 
         if (points.size() < 30) {
             drawBesierCurves(graphicsContext);
         }
-        if (points.size() == 29) {
+        if (points.size() == 30) {
+            points.remove(points.size() - 1);
             graphicsContext.fillText("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.", 20, 590);
             System.out.println("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.");
         }
