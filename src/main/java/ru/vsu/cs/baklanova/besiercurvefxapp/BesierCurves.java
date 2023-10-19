@@ -9,6 +9,12 @@ import java.util.ArrayList;
 public class BesierCurves {
     public static void drawBesierCurve(final GraphicsContext graphicsContext, ArrayList<Point2D> points) {
 //        final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
+        if (points == null) {
+            return;
+        }
+        if (points.size() <= 1) {
+            return;
+        }
         int n = points.size() - 1;//Степень кривой
 
         ArrayList<Point2D> cK = new ArrayList<>();

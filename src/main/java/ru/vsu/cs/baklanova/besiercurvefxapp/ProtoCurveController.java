@@ -19,6 +19,8 @@ public class ProtoCurveController {
 
     ArrayList<Point2D> points = new ArrayList<Point2D>();
 
+    private final int POINT_RADIUS = 3;
+
     @FXML
     private void initialize() {
         anchorPane.prefWidthProperty().addListener((ov, oldValue, newValue) -> canvas.setWidth(newValue.doubleValue()));
@@ -35,39 +37,43 @@ public class ProtoCurveController {
             switch (event.getButton()) {
                 case PRIMARY -> handlePrimaryClick(graphicsContext, event);
                 case MIDDLE -> handleMiddleClick(graphicsContext, event);
+                case SECONDARY -> deleteLastPoint(graphicsContext, event);
             }
         });
     }
 
+    private void deleteLastPoint(GraphicsContext graphicsContext, MouseEvent event) {
+        if (points.size() <= 0) {
+            return;
+        }
+        points.remove(points.size() - 1);
+        drawBesierCurves(graphicsContext);
+    }
     private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event) {
         final Point2D clickPoint = new Point2D(event.getX(), event.getY());
         points.add(clickPoint);
 
-        final int POINT_RADIUS = 2;
+
 
         //System.out.println(BesierCurves.partFactorial(13, 12));
 
         if (points.size() < 30) {
-            graphicsContext.clearRect(1, 1, 798.5, 598);
-            for (int i = 0; i < points.size(); i++) {
-                graphicsContext.fillOval(
-                        points.get(i).getX() - POINT_RADIUS, points.get(i).getY() - POINT_RADIUS,
-                        2 * POINT_RADIUS, 2 * POINT_RADIUS);
-            }
-            BesierCurves.drawBesierCurve(graphicsContext, points);
-
+            drawBesierCurves(graphicsContext);
         }
         if (points.size() == 29) {
             graphicsContext.fillText("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.", 20, 590);
             System.out.println("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.");
         }
+    }
 
-
-        /*if (points.size() > 0) {
-            final Point2D lastPoint = points.get(points.size() - 1);
-            graphicsContext.strokeLine(lastPoint.getX(), lastPoint.getY(), clickPoint.getX(), clickPoint.getY());
-        }*/
-
+    private void drawBesierCurves(GraphicsContext graphicsContext) {
+        graphicsContext.clearRect(1, 1, 798.5, 598);
+        for (int i = 0; i < points.size(); i++) {
+            graphicsContext.fillOval(
+                    points.get(i).getX() - POINT_RADIUS, points.get(i).getY() - POINT_RADIUS,
+                    2 * POINT_RADIUS, 2 * POINT_RADIUS);
+        }
+        BesierCurves.drawBesierCurve(graphicsContext, points);
     }
 
     private void handleMiddleClick(GraphicsContext graphicsContext, MouseEvent event) {
