@@ -19,7 +19,9 @@ public class ProtoCurveController {
 
     ArrayList<Point2D> points = new ArrayList<Point2D>();
 
-    private final int POINT_RADIUS = 3;
+    private final int POINT_RADIUS = 6;
+
+    private boolean isDragged = false;
 
     @FXML
     private void initialize() {
@@ -33,16 +35,43 @@ public class ProtoCurveController {
         graphicsContext.strokeLine(0, height, width, height);
         graphicsContext.strokeLine(width, 0, width, height);
 
+        canvas.setOnMouseDragged(event -> {
+            movePoint(graphicsContext, event);
+        });
+
         canvas.setOnMouseClicked(event -> {
+            isDragged = false;
             switch (event.getButton()) {
                 case PRIMARY -> handlePrimaryClick(graphicsContext, event);
                 case MIDDLE -> handleMiddleClick(graphicsContext, event);
-                case SECONDARY -> deleteLastPoint(graphicsContext, event);
+                case SECONDARY -> deleteLastPoint(graphicsContext);
             }
         });
     }
 
-    private void deleteLastPoint(GraphicsContext graphicsContext, MouseEvent event) {
+    private void movePoint(GraphicsContext graphicsContext, MouseEvent event) {
+
+        for (int i = 0; i < points.size(); i++) {
+            double x = points.get(i).getX();
+            double y = points.get(i).getY();
+            //graphicsContext.fillOval(160, 160, 60, 60);
+            //System.out.println(x + " " + event.getX());
+            //System.out.println(y + " " + event.getY());
+            //System.out.println();
+            if (Math.abs(event.getX() - x) <= POINT_RADIUS) {
+                if (Math.abs(event.getY() - y) <= POINT_RADIUS) {
+                    if (!isDragged) {
+                        points.remove(i);
+                        isDragged = true;
+                    }
+                    //graphicsContext.fillOval(60, 60, 60, 60);
+                    return;
+                }
+            }
+        }
+        //graphicsContext.fillOval(160, 60, 60, 60);
+    }
+    private void deleteLastPoint(GraphicsContext graphicsContext) {
         if (points.size() <= 0) {
             return;
         }
@@ -52,8 +81,6 @@ public class ProtoCurveController {
     private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event) {
         final Point2D clickPoint = new Point2D(event.getX(), event.getY());
         points.add(clickPoint);
-
-
 
         //System.out.println(BesierCurves.partFactorial(13, 12));
 
