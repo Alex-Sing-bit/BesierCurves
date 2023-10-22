@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class BesierCurves {
     public static void drawBesierCurve(final GraphicsContext graphicsContext, ArrayList<Point2D> points) {
-//        final PixelWriter pixelWriter = graphicsContext.getPixelWriter();
         if (points == null) {
             return;
         }
@@ -44,29 +43,16 @@ public class BesierCurves {
     }
 
     public static double basicFunction(int n, int k, double t) {
-        //long c;
         double c;
         if (k < n - k) {
-            //c = partFactorial(n, n - k) / partFactorial(k, 1);
             c = simultaneousDivision(n, n - k, k, 1);
         } else {
-            //c = partFactorial(n, k) / partFactorial(n - k, 1);
             c = simultaneousDivision(n, k, n - k, 1);
         }
         return c * Math.pow(t, k) * Math.pow(1 - t, n - k);
     }
-    public static long partFactorial(int n, int m) {
-        if (n == 0) {
-            return 1;
-        } else if (n == m) {
-            return 1;
-        } else {
-            return n * partFactorial(n-1, m);
-        }
-    }
 
-    public static double simultaneousDivision(int n1, int n2, int m1, int m2) {
-
+    private static double simultaneousDivision(int n1, int n2, int m1, int m2) {
         double res = 1;
 
         int j = m1;
@@ -83,7 +69,15 @@ public class BesierCurves {
         return res;
     }
 
-
+    private static long partFactorial(int n, int m) {
+        if (n == 0) {
+            return 1;
+        } else if (n == m) {
+            return 1;
+        } else {
+            return n * partFactorial(n-1, m);
+        }
+    }
 }
 
 

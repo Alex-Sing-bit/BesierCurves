@@ -64,12 +64,10 @@ public class ProtoCurveController {
                         isDragged = true;
                         graphicsContext.fillOval(x - POINT_RADIUS * 2, y - POINT_RADIUS * 2, POINT_RADIUS * 4, POINT_RADIUS * 4);
                     }
-                    //graphicsContext.fillOval(60, 60, 60, 60);
                     return;
                 }
             }
         }
-        //graphicsContext.fillOval(160, 60, 60, 60);
     }
     private void deleteLastPoint(GraphicsContext graphicsContext) {
         if (points.size() <= 0) {
@@ -80,14 +78,14 @@ public class ProtoCurveController {
     }
 
     private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event) {
-        handlePrimaryClick(graphicsContext, event, points.size() - 1);
+        handlePrimaryClick(graphicsContext, event, - 1);
     }
-    private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event, int i) {
+    private void handlePrimaryClick(GraphicsContext graphicsContext, MouseEvent event, int pointPlace) {
         final Point2D clickPoint = new Point2D(event.getX(), event.getY());
-        if (i < 0) {
+        if (pointPlace < 0) {
             points.add(clickPoint);
         } else {
-            points.add(i, clickPoint);
+            points.add(pointPlace, clickPoint);
         }
 
         drawBesierCurves(graphicsContext);

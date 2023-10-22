@@ -1,4 +1,4 @@
-module com.cgvsu.rasterizationfxapp {
+module ru.vsu.cs.baklanova.besiercurvefxapp {
     requires javafx.controls;
     requires javafx.fxml;
 
