@@ -51,7 +51,6 @@ public class ProtoCurveController {
             isDraggedPoint = -1;
         });
     }
-
     private void movePoint(GraphicsContext graphicsContext, MouseEvent event) {
 
         for (int i = 0; i < points.size(); i++) {
@@ -63,6 +62,7 @@ public class ProtoCurveController {
                         points.remove(i);
                         isDraggedPoint = i;
                         isDragged = true;
+                        graphicsContext.fillOval(x - POINT_RADIUS * 2, y - POINT_RADIUS * 2, POINT_RADIUS * 4, POINT_RADIUS * 4);
                     }
                     //graphicsContext.fillOval(60, 60, 60, 60);
                     return;
@@ -90,16 +90,7 @@ public class ProtoCurveController {
             points.add(i, clickPoint);
         }
 
-        //System.out.println(BesierCurves.partFactorial(13, 12));
-
-        if (points.size() < 30) {
-            drawBesierCurves(graphicsContext);
-        }
-        if (points.size() == 30) {
-            points.remove(points.size() - 1);
-            graphicsContext.fillText("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.", 20, 590);
-            System.out.println("Больше точек не поддерживается. Нажмите на колесико мыши для очистки холста.");
-        }
+        drawBesierCurves(graphicsContext);
     }
 
     private void drawBesierCurves(GraphicsContext graphicsContext) {
