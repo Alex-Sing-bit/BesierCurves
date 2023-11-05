@@ -52,19 +52,18 @@ public class ProtoCurveController {
         });
     }
     private void movePoint(GraphicsContext graphicsContext, MouseEvent event) {
-
+        if (isDragged) {
+            return;
+        }
         for (int i = 0; i < points.size(); i++) {
             double x = points.get(i).getX();
             double y = points.get(i).getY();
             if (Math.abs(event.getX() - x) <= POINT_RADIUS) {
                 if (Math.abs(event.getY() - y) <= POINT_RADIUS) {
-                    if (!isDragged) {
-                        points.remove(i);
-                        isDraggedPoint = i;
-                        isDragged = true;
-                        graphicsContext.fillOval(x - POINT_RADIUS * 2, y - POINT_RADIUS * 2, POINT_RADIUS * 4, POINT_RADIUS * 4);
-                    }
-                    return;
+                    points.remove(i);
+                    isDraggedPoint = i;
+                    isDragged = true;
+                    graphicsContext.fillOval(x - POINT_RADIUS * 2, y - POINT_RADIUS * 2, POINT_RADIUS * 4, POINT_RADIUS * 4);
                 }
             }
         }
