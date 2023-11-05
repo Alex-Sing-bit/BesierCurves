@@ -2,37 +2,63 @@ package ru.vsu.cs.baklanova.besiercurvefxapp;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.PixelWriter;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class BesierCurves {
     public static void drawBesierCurve(final GraphicsContext graphicsContext, ArrayList<Point2D> points) {
         if (points == null) {
             return;
         }
-        if (points.size() <= 1) {
+        int size  = points.size();
+        if (size <= 1) {
             return;
         }
-        int n = points.size() - 1;//Степень кривой
+        int n = size - 1;//Степень кривой
 
         ArrayList<Point2D> cK = new ArrayList<>();
-        double shag = 0.005;
+        double step = 0.1;
+
+        final int MAX_POINTS_FOR_STEP = 200;
+        if (size > MAX_POINTS_FOR_STEP) {
+            step /= MAX_POINTS_FOR_STEP;
+        } else {
+            step = 0.1 / size;
+        }
         double t = 0;
 
         cK.add(points.get(0));
 
-        while (Math.abs(t - (1 + shag)) >= 10e-10) {
+        while (Math.abs(t - (1 + step)) >= 10e-10) {
+            double[] coef1 = new double[n + 1];
+
+            double tt0 = Math.pow(t, n);
+            double tt1 = Math.pow(1 - t, n);
+
+            double a1 = tt0;
+            double a2 = tt1;
+
+            if (t > 10e-300 && 1 - t > 10e-300) {
+                for (int i = 1; i <= (n + 1) / 2; i++) {
+                    tt1 = tt1 / (1 - t) * t;
+                    tt0 = tt0 / t * (1 - t);
+
+                    coef1[i] = tt1;
+                    coef1[n - i] = tt0;
+                }
+            }
+            coef1[0] = a2;
+            coef1[n] = a1;
+
             double cX = 0;
             double cY = 0;
             for (int k = 0; k <= n; k++) {
-                double b = basicFunction(n, k, t);
+                double b = basicFunction(n, k, t) * coef1[k];
                 cX += points.get(k).getX() * b;
                 cY += points.get(k).getY() * b;
             }
             cK.add(new Point2D(cX, cY));
-            t += shag;
+            t += step;
         }
 
         for (int i = 1; i < cK.size(); i++) {
@@ -49,7 +75,8 @@ public class BesierCurves {
         } else {
             c = simultaneousDivision(n, k, n - k, 1);
         }
-        return c * Math.pow(t, k) * Math.pow(1 - t, n - k);
+        return c;
+
     }
 
     private static double simultaneousDivision(int n1, int n2, int m1, int m2) {
@@ -69,15 +96,9 @@ public class BesierCurves {
         return res;
     }
 
-    private static long partFactorial(int n, int m) {
-        if (n == 0) {
-            return 1;
-        } else if (n == m) {
-            return 1;
-        } else {
-            return n * partFactorial(n-1, m);
-        }
-    }
+}
+
+
 }
 
 
